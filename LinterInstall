@@ -1,0 +1,33 @@
+#!/bin/bash
+
+cd /tmp/linter/linter/linux32
+
+date --utc -s "2018-01-01 00:01"
+
+/usr/bin/expect <<EOD
+set timeoun 360
+spawn ./linterLINUX.x86.6.0.17.28.bundle.sh
+expect "language?" {send "1\r"}
+expect "." {send "\r"}
+expect ")" {send " "}
+expect ")" {send " "}
+expect ")" {send " "}
+expect ")" {send " "}
+expect ")" {send " "}
+expect ")" {send " "}
+expect ")" {send " "}
+expect ")" {send " "}
+expect ")" {send " "}
+expect ":" {send "y\r"}
+expect ":" {send "y\r"}
+expect ":" {send "/home\r"}
+expect ":" {send "n\r"}
+expect ":" {send "2\r"}
+expect ":" {send "y\r"}
+expect ":" {send "n\r"}
+expect ":" {send "n\r"}
+expect ":" {send "n\r"}
+expect ":" {send "n\r"}
+EOD
+
+

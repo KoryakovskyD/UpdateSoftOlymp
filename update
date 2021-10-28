@@ -1,0 +1,441 @@
+#!/bin/bash
+
+#cp -f -vp + создает недостоющие каталоги + при указании в $3 пишет -v
+#p.s. в МСВС некорректно работает ключ -f в cp
+#при указании имени файла третьим параметром пишет в него -v
+fcp()
+{
+    if [ $# -lt 2 ] || [ $# -gt 3 ]; then
+        echo "fcp() usage: fcp sourcefile targetfile [fileprot]"
+        exit
+    fi
+    if [ ! -e $1 ] && [ ! -d $1 ]; then #not found source file/directory
+        echo "fcp() error: not found source file $1"
+        exit
+    fi
+
+    if [ ! -d $2 ] && [ -e $2 ]; then #deleting old file/directory
+        rm -fr $2
+    fi
+
+    if [ -f $1 ]; then
+        cd `dirname $1`
+        SFP=`pwd $1`/`basename $1` #source full path file name
+    else
+        cd $1
+        SFP=`pwd $1` #source full path directory
+    fi
+    cd - > /dev/null
+
+    if [ -f $2 ] || [ ! -e $2 ]; then
+        mkdir -p `dirname $2`
+        cd `dirname $2`
+        TFP=`pwd $2`/`basename $2` #target full path file name
+    else
+        cd $2
+        TFP=`pwd $2` #target full path directory
+    fi
+    cd - > /dev/null
+
+    for SFN in `find ${SFP} -type f; find ${SFP} -type l; find ${SFP} -mindepth 1 -type d`; do
+        if [ -f ${TFP} ] || [ ! -e ${TFP} ] && [ -f ${SFP} ]; then
+            ADDFN=""
+        else
+            ADDFN=/`basename ${SFP}``echo "/${SFN}" | awk -F "${SFP}" '{print $NF}'`
+        fi
+        if [ "${TFP}" == "/" ]; then
+            TFP=""
+        fi
+
+        if [ -d ${TFP}${ADDFN} ]; then
+            mkdir -p ${TFP}${ADDFN}
+            continue
+        fi
+        #make parent directories
+        mkdir -p `dirname ${TFP}${ADDFN}`
+        cp -rp ${SFN} ${TFP}${ADDFN}
+        if [ $? == 0 ]; then
+            status="OK"
+        else
+            status="ERROR"
+        fi
+
+        if [ "$3" != "" ]; then
+            mkdir -p `dirname $3`
+            if [ "`echo $3 | grep 'UpdateSoft.log'`" != "" ]; then
+                printf "%-10s%s" "$status" "${TFP}${ADDFN}" >> $3
+                printf "\n" >> $3
+            else
+               echo "${SFN} ${TFP}${ADDFN}" >> $3
+            fi
+        fi
+    done
+}
+
+
+# Help
+if [ "$1" == "" ]; then
+  echo -e "\n  Please enter device number!"
+  echo -e "  09(4.09) or 06(6.06)\n"
+  exit
+fi
+
+
+
+# Имя проекта
+PRJNAME="OLYMP-G"
+# Путь к SPO на сервере
+SERVERSPOPATH="/mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO"
+# Путь к архиву ПО на приборе
+MFPDIR="/home/mfp"
+# Путь к смонтированному ПО на приборе
+INTELPATH="/mnt/net/OLYMP-G/FLASH/INTEL"
+INTELPATHTU="/mnt/net/OLYMP-G/FLASH.TU/INTEL"
+
+[ ! -d /home/mfp ] && mkdir -p /home/mfp
+[ ! -d /home/kf ] && mkdir -p /home/kf
+
+
+# Замена device.inf при первой прошивке
+if [ "`echo $@ | grep All`" != "" ]; then
+   if [ ! -f ${MFPDIR}/device.inf ]; then
+     if [ $1 == 09 ]; then
+         fcp ${SERVERSPOPATH}/device_inf/device.inf_4.09 ${MFPDIR}
+         mv  ${MFPDIR}/device.inf_4.09  ${MFPDIR}/device.inf
+     else
+         fcp ${SERVERSPOPATH}/device_inf/device.inf_6.06 ${MFPDIR}
+         mv  ${MFPDIR}/device.inf_6.06  ${MFPDIR}/device.inf
+     fi
+   fi
+fi
+
+# Вывод ip-адреса прибора
+ip_addr="`cat $MFPDIR/device.inf | grep 'IPADDR=' | awk -F'=' '{print $2}'`"
+# Имя логфайла
+logfile="$SERVERSPOPATH/UpdateSoft.log"
+echo "Ip=$ip_addr" >> $logfile
+
+
+if [ "`echo $@ | grep All`" != "" ]; then
+    logfile="$SERVERSPOPATH/ccs/MPS.upd"
+    echo "" > $logfile
+fi
+
+echo "" >> $logfile
+
+fLibFreeType=0
+if [ "`ls -l /usr/lib/libfreetype.so | grep 6.3.17`" != "" ]; then
+   fLibFreeType=1
+fi
+
+
+# УСТАНОВКА СИСТЕМНЫХ ФАЙЛОВ
+if [ "`echo $@ | grep SysFiles`" != "" ]; then
+   echo "Updating system files"
+   if [ $1 == 09 ]; then
+      SYSFILES=${SERVERSPOPATH}/sysfiles
+      [ -f ${SYSFILES}/usr/lib/libfreetype.so.6.3.22 ] && rm ${SYSFILES}/usr/lib/libfreetype.so.6.3.22
+      cp ${SYSFILES}/usr/lib/libfreetype.so.6 /usr/lib/
+   else
+      SYSFILES=${SERVERSPOPATH}/sysfiles_06
+   fi
+   for FN in `ls ${SYSFILES}`; do
+#      [ $fLibFreeType == 1 ] && [ "$FN" == "libfreetype.so.6.3.17" ] && continue
+      fcp ${SYSFILES}/${FN} /  $logfile
+   done
+
+
+   # ОБНОВЛЕНИЕ ШРИФТОВ
+   SERVERFONTSPATH=${SERVERSPOPATH}/fonts
+   FONTSUSRPATH=/usr/share/X11/fonts
+   FONTSETCPATH=/etc/X11/fontpath.d
+
+   # Проверяем существования каталога
+   if [ -d $FONTSUSRPATH ]; then
+       HOSTCOUNTFONTS=`find ${FONTSUSRPATH} | wc -l`
+   fi
+
+   SERVERCOUNTFONTS=`find ${SERVERFONTSPATH} | wc -l`
+
+   if [ "${HOSTCOUNTFONTS}" != "${SERVERCOUNTFONTS}" ]; then
+      #удаление старых шрифтов ОС
+      rm -fr ${FONTSUSRPATH} 2> /dev/null
+
+      fcp ${SERVERFONTSPATH} `dirname ${FONTSUSRPATH}`
+
+      #Создание списка шрифтов, существующих в /usr/shares/X11
+      FONTS=`ls  ${FONTSUSRPATH}`
+
+      for FONT in ${FONTS}
+      do
+          ln -s -f -n ${FONTSUSRPATH}/${FONT} ${FONTSETCPATH}/${FONT}
+
+          #создание ссылок на подкаталоги
+          SUBFONTS=`ls -F ${FONTSUSRPATH}/${FONT} | grep / | awk -F "/" '{print $1}'`
+          for SUBFONT in ${SUBFONTS}
+          do
+              ln -s -f -n ${FONTSUSRPATH}/${FONT}/${SUBFONT} ${FONTSETCPATH}/${FONT}_${SUBFONT}
+          done
+      done
+  fi
+fi
+
+
+# UPDATING SOFT MAIN MODE
+if [ $1 == 09 ]; then
+
+    echo "Updating MAIN 4.09"
+
+    # rconf
+    if [ "`echo $@ | grep SYS_SPO`" != "" ]; then
+       echo "Updating rconf"
+       [ -d ${MFPDIR}/${PRJNAME}/SPO/rconf ] && rm -R ${MFPDIR}/${PRJNAME}/SPO/rconf
+       fcp ${SERVERSPOPATH}/rconf ${MFPDIR}/${PRJNAME}/SPO
+    fi
+
+    # ndisp
+    if [ "`echo $@ | grep SYS_SPO`" != "" ]; then
+       echo "Updating ndisp"
+       [ -f ${MFPDIR}/${PRJNAME}/ndisp ] && rm -R ${MFPDIR}/${PRJNAME}/ndisp
+       fcp ${SERVERSPOPATH}/ndisp/ndisp ${MFPDIR}/${PRJNAME} $logfile
+    fi
+
+    # remount_snd
+    if [ "`echo $@ | grep SYS_SPO`" != "" ]; then
+       echo "remount_snd"
+       [ -d ${MFPDIR}/${PRJNAME}/SPO/remount_snd ] && rm -R ${MFPDIR}/${PRJNAME}/SPO/remount_snd
+       fcp  ${INTELPATH}/COMMON/SPO/remount_snd ${MFPDIR}/${PRJNAME}/SPO $logfile
+    fi
+
+    # poweroff
+    if [ "`echo $@ | grep SYS_SPO`" != "" ]; then
+       echo "poweroff"
+       [ -d ${MFPDIR}/${PRJNAME}/SPO/poweroff ] && rm -R ${MFPDIR}/${PRJNAME}/SPO/poweroff
+       fcp  ${INTELPATH}/COMMON/SPO/poweroff ${MFPDIR}/${PRJNAME}/SPO $logfile
+    fi
+
+    # mountNfds
+    if [ "`echo $@ | grep SYS_SPO`" != "" ]; then
+       echo "mountNfds"
+       [ -d ${MFPDIR}/${PRJNAME}/SPO/mountNfds ] && rm -R ${MFPDIR}/${PRJNAME}/SPO/mountNfds
+       fcp  ${INTELPATH}/COMMON/SPO/mountNfds ${MFPDIR}/${PRJNAME}/SPO $logfile
+    fi
+
+    #update sord
+    if [ "`echo $@ | grep SORD`" != "" ]; then
+       echo "SORD"
+       [ -d ${MFPDIR}/${PRJNAME}/SORD ] && rm -R ${MFPDIR}/${PRJNAME}/SORD
+       fcp ${INTELPATH}/09/SORD ${MFPDIR}/${PRJNAME} $logfile
+    fi
+
+    #update sord tech
+    if [ "`echo $@ | grep SORD_TECH`" != "" ]; then
+       echo "SORD TECH"
+       [ -d ${MFPDIR}/${PRJNAME}/SORD_TECH ] && rm -R ${MFPDIR}/${PRJNAME}/SORD_TECH
+       fcp ${INTELPATH}/09/SORD_TECH ${MFPDIR}/${PRJNAME} $logfile
+    fi
+
+    #update ask
+    if [ "`echo $@ | grep ASK`" != "" ]; then
+       echo "ASK"
+       [ -d  ${MFPDIR}/${PRJNAME}/ASK ] && rm -R ${MFPDIR}/${PRJNAME}/ASK
+       fcp ${INTELPATH}/09/ASK ${MFPDIR}/${PRJNAME} $logfile
+    fi
+
+    #sgr
+    if [ "`echo $@ | grep SGR`" != "" ]; then
+       echo "SGR"
+       [ -d  ${MFPDIR}/${PRJNAME}/SGR ] && rm -R ${MFPDIR}/${PRJNAME}/SGR
+       fcp ${INTELPATH}/09/SGR ${MFPDIR}/${PRJNAME} $logfile
+    fi
+
+    #ogs
+    if [ "`echo $@ | grep OGS_VP`" != "" ]; then
+       echo "OGS_VP"
+       [ -d  ${MFPDIR}/${PRJNAME}/OGS_VP ] && rm -R ${MFPDIR}/${PRJNAME}/OGS_VP
+       fcp ${INTELPATH}/09/OGS_VP ${MFPDIR}/${PRJNAME} $logfile
+    fi
+
+    #sppr
+    if [ "`echo $@ | grep SPPR_FMO`" != "" ]; then
+       echo "SPPR"
+       [ -d  ${MFPDIR}/${PRJNAME}/SPPR_FMO ] && rm -R ${MFPDIR}/${PRJNAME}/SPPR_FMO
+       fcp ${INTELPATH}/09/SPPR_FMO  ${MFPDIR}/${PRJNAME} $logfile
+    fi
+
+    #TSYNC
+    if [ "`echo $@ | grep TSYNC`" != "" ]; then
+       echo "tsync"
+       [ -d ${MFPDIR}/${PRJNAME}/TSYNC ] && rm -R ${MFPDIR}/${PRJNAME}/TSYNC
+       fcp ${INTELPATH}/COMMON/TSYNC ${MFPDIR}/${PRJNAME} $logfile
+    fi
+
+    #StartMFP
+    if [ "`echo $@ | grep start_po_mfp`" != "" ]; then
+       echo "start_po_mfp"
+       fcp  ${INTELPATH}/COMMON/SPO/start_po_mfp/start_po_mfp ${MFPDIR}/${PRJNAME} $logfile
+    fi
+
+
+
+    if [ "`echo $@ | grep SP_MODE`" != "" ]; then
+       echo "Updating SP"
+       echo "ASK"
+       [ -d ${MFPDIR}/${PRJNAME}.SP/ASK ] && rm -R ${MFPDIR}/${PRJNAME}.SP/ASK
+       fcp ${INTELPATH}/09.SP/ASK ${MFPDIR}/${PRJNAME}.SP $logfile
+
+       cd ${MFPDIR}/${PRJNAME}.SP
+         echo "SORD"
+         [ -d ${MFPDIR}/${PRJNAME}.SP/SORD ] && rm -R ${MFPDIR}/${PRJNAME}.SP/SORD
+         ln -s ../OLYMP-G/SORD SORD
+         echo "SORD TECH"
+         [ -d ${MFPDIR}/${PRJNAME}.SP/SORD_TECH ] && rm -R ${MFPDIR}/${PRJNAME}.SP/SORD_TECH
+         ln -s ../OLYMP-G/SORD_TECH SORD_TECH
+       cd -
+    fi
+
+else
+    echo "Updating MAIN 6.06"
+
+    # mountNfds
+    if [ "`echo $@ | grep SYS_SPO`" != "" ]; then
+       echo "mountNfds"
+       [ -d ${MFPDIR}/${PRJNAME}/SPO/mountNfds ] && rm -R ${MFPDIR}/${PRJNAME}/SPO/mountNfds
+       fcp  ${INTELPATH}/COMMON/SPO/mountNfds ${MFPDIR}/${PRJNAME}/SPO
+    fi
+    
+    #TSYNC
+    if [ "`echo $@ | grep TSYNC`" != "" ]; then
+       echo "TSYNC"
+       [ -d ${MFPDIR}/${PRJNAME}/TSYNC ] && rm -R ${MFPDIR}/${PRJNAME}/TSYNC
+       fcp ${INTELPATH}/COMMON/TSYNC ${MFPDIR}/${PRJNAME} $logfile
+    fi
+
+    #update ask
+    if [ "`echo $@ | grep ASK`" != "" ]; then
+      echo "ASK"
+      [ -d ${MFPDIR}/${PRJNAME}/ASK ] && rm -R ${MFPDIR}/${PRJNAME}/ASK
+      fcp ${INTELPATH}/06/ASK ${MFPDIR}/${PRJNAME} $logfile
+    fi
+
+    #update ldb_cli
+    if [ "`echo $@ | grep LDB_CLI`" != "" ]; then
+      echo "LDB_CLI"
+      [ -d ${MFPDIR}/${PRJNAME}/LDB_CLI ] && rm -R ${MFPDIR}/${PRJNAME}/LDB_CLI
+      fcp ${INTELPATH}/06/LDB_CLI ${MFPDIR}/${PRJNAME} $logfile
+    fi
+
+    #update msp
+    if [ "`echo $@ | grep MSP`" != "" ]; then
+      echo "MSP"
+      [ -d ${MFPDIR}/${PRJNAME}/MSP ] && rm -R ${MFPDIR}/${PRJNAME}/MSP
+      fcp ${INTELPATH}/06/MSP ${MFPDIR}/${PRJNAME} $logfile
+    fi
+
+    #update svs
+    if [ "`echo $@ | grep SVS`" != "" ]; then
+      echo "SVS"
+      [ -d ${MFPDIR}/${PRJNAME}/SVS ] && rm -R ${MFPDIR}/${PRJNAME}/SVS
+      fcp ${INTELPATH}/06/SVS ${MFPDIR}/${PRJNAME} $logfile
+      ln -s /mnt/secure/var/doc ${MFPDIR}/${PRJNAME}/SVS/doc
+    fi
+
+    #update TU
+    if [ "`echo $@ | grep TU`" != "" ]; then
+      echo "TU"
+      [ -d ${MFPDIR}/${PRJNAME}/TU ] && rm -R ${MFPDIR}/${PRJNAME}/TU
+      fcp ${INTELPATHTU}/06/6.06/TU ${MFPDIR}/${PRJNAME}
+    fi
+
+
+    #update start_po_mfp
+    if [ "`echo $@ | grep start_po_mfp`" != "" ]; then
+      echo "start_po_mfp"
+      fcp ${INTELPATH}/COMMON/SPO/start_po_mfp_06/start_po_mfp ${MFPDIR}/${PRJNAME} $logfile
+    fi
+
+    #update rconf
+    if [ "`echo $@ | grep rconf`" != "" ]; then
+      echo "rconf"
+      fcp ${INTELPATH}/COMMON/SPO/rconf_6.06 ${MFPDIR}/${PRJNAME}/SPO $logfile
+    fi
+
+    #update Ekran
+    if [ "`echo $@ | grep MSE`" != "" ]; then
+      echo "Ekran"
+      fcp ${INTELPATH}/COMMON/SPO/Ekran ${MFPDIR}/${PRJNAME}/SPO $logfile
+    fi
+
+
+
+    if [ "`echo $@ | grep SP`" != "" ]; then
+
+      echo "Updating SP"
+      #update ask
+      echo "ASK"
+      [ -d ${MFPDIR}/${PRJNAME}.SP/ASK ] && rm -R ${MFPDIR}/${PRJNAME}.SP/ASK
+      fcp ${INTELPATH}/06.SP/ASK ${MFPDIR}/${PRJNAME}.SP $logfile
+
+      #update svs
+      echo "SVS"
+      [ -d ${MFPDIR}/${PRJNAME}.SP/SVS ] && rm -R ${MFPDIR}/${PRJNAME}.SP/SVS
+      fcp ${INTELPATH}/06.SP/SVS ${MFPDIR}/${PRJNAME}.SP $logfile
+      ln -s /mnt/secure/var/doc ${MFPDIR}/${PRJNAME}.SP/SVS/doc
+
+      #update ldb_cli
+      echo "LDB_CLI"
+      [ -d ${MFPDIR}/${PRJNAME}.SP/LDB_CLI ] && rm -R ${MFPDIR}/${PRJNAME}.SP/LDB_CLI
+      fcp ${INTELPATH}/06.SP/LDB_CLI ${MFPDIR}/${PRJNAME}.SP $logfile
+    fi
+
+    if [ "`echo $@ | grep All`" != "" ]; then
+       if [ "`fdisk -l | grep sda3`" == "" ]; then
+          echo "Make /dev/sda3"
+          sfdisk -f -N3 /dev/sda << EOF
+4462,14790,L
+EOF
+
+          # mkfs /dev/sda3
+          partprobe /dev/sda
+          mkfs.ext3 /dev/sda3
+       fi
+    fi
+fi
+
+
+if [ "`echo $@ | grep All`" != "" ]; then
+
+   if [ $1 == 09 ]; then
+      fcp ${INTELPATH}/COMMON/SPO/createUpd/MPS.upd.agat ${MFPDIR}
+   else
+      fcp ${INTELPATH}/COMMON/SPO/createUpd/MPS.upd.agat_06 ${MFPDIR}
+      mv ${MFPDIR}/MPS.upd.agat_06 ${MFPDIR}/MPS.upd.agat
+      fcp ${INTELPATH}/COMMON/SPO/createUpd/MPS.upd.06 ${MFPDIR}
+      mv ${MFPDIR}/MPS.upd.06 ${MFPDIR}/MPS.upd
+   fi
+
+   cd ${INTELPATH}/COMMON/SPO/ccs
+      ./del
+   cd -
+
+   echo "Rm timezone"
+#   [ -f /etc/localtime ] && rm -f /etc/localtime
+   timeconfig UTC
+
+   echo "Rm tmpwatch"
+   [ -f /etc/cron.daily/cups ] && rm -R /etc/cron.daily/cups
+   [ -f /etc/cron.daily/tmpwatch ] && rm -R /etc/cron.daily/tmpwatch
+
+   echo "Rm older network"
+   rm -fR /etc/sysconfig/network-scripts/ifcfg-eth* 2> /dev/null
+
+   gccv4
+fi
+
+
+
+
+
+
+
+

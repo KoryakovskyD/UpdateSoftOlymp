@@ -1,0 +1,20 @@
+#!/bin/bash
+
+sudo ./drweb-gui_5.0.2.1-1407221532+mo~mcbc_x86.run --noexec
+sudo rm drweb-gui_5.0.2.1-1407221532+mo~mcbc_x86/LICENSE
+sudo rm drweb-gui_5.0.2.1-1407221532+mo~mcbc_x86/LICENSE.rus
+
+
+/usr/bin/expect <<EOD
+set timeoun 360
+spawn ./drweb-gui_5.0.2.1-1407221532+mo~mcbc_x86/setup.sh
+expect "continue?" {send "y\r"}
+expect "license?" {send "y\r"}
+expect "continue?" {send "y\r"}
+expect "file?" {send "y\r"}
+expect "skip:" {send "/tmp/drweb/drweb32.key\r"}
+expect "services" {send "y\r"}
+expect "Press Enter to finish." {send "\r"}
+expect "Press Enter to finish." {send "\r"}
+EOD
+

@@ -1,0 +1,197 @@
+#!/bin/bash
+
+# Расположение заимствованного ПО в /opt
+LinterPath=/opt/releks/linter
+AgatTestsPath=/opt/agat/tests/work
+AgatGisLibPath=/opt/agat/gis-lib/work
+AgatGisMapPath=/opt/agat/gis-map/work
+RamecAgentPath=/opt/ramec/kszi/work
+DrWebPath=/opt/drweb/643.72110450.00101-01
+
+
+# Выбор прибора
+if [ "$1" == "09" ]; then
+    hostIP="10.4.6.55"
+else
+    hostIP="10.3.6.55"
+fi
+
+if [ "`echo $2`" == "" ]; then
+    exit
+fi
+
+echo "Install another PO"
+
+# Имя проекта
+PRJNAME="OLYMP-G"
+# Путь к SPO на сервере
+SERVERSPOPATH="/mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO"
+# Путь к архиву ПО на приборе
+MFPDIR="/home/mfp"
+# Путь к смонтированному ПО на приборе
+INTELPATH="/mnt/net/OLYMP-G/FLASH/INTEL"
+# Логфайл
+logFile="$SERVERSPOPATH/UpdateSoft_another.log"
+echo " " > $logFile
+
+#for curPath in $LinterPath $AgatTestsPath $AgatTestsPath $AgatGisLibPath $AgatGisMapPath $RamecAgentPath $DrWebPath; do
+#    echo $curPath
+#done
+
+
+if [ -n /mnt/opt ]; then
+    mkdir -p /mnt/opt > /dev/null 2>&1
+fi
+
+mount | grep "/mnt/opt"
+if [ "`echo $?`" == "1" ]; then
+    mount ${hostIP}:/opt /mnt/opt > /dev/null 2>&1
+fi
+
+
+# Установка Linter
+if [ "`echo $@ | grep Linter`" != "" ]; then
+    echo "Linter"
+    cp -rp /mnt${LinterPath} /tmp
+    cp -rp /mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO/UpdateSoftOlymp/LinterInstall /tmp/linter/linter/linux32
+    cd  /tmp/linter/linter/linux32
+       ./LinterInstall
+    cd --
+    echo "OK    Linter" >> $logFile
+fi
+
+
+# Установка тестов Агата
+if [ "`echo $@ | grep AgatTests`" != "" ]; then
+    echo "AgatTests"
+    mkdir -p /tmp/tests
+    cp -rp /mnt${AgatTestsPath}/* /tmp/tests
+    rm /tmp/tests/mouse/etc/fstab
+    rm /tmp/tests/mouse/etc/ld.so.conf
+    rm /tmp/tests/sensor/etc/fstab
+    rm /tmp/tests/sensor/etc/ld.so.conf
+
+    rm /tmp/tests/sensor/etc/rc.d/rc.sysinit
+    rm /tmp/tests/sensor/usr/kaz_pic/delphin_stop1.sh
+    rm /tmp/tests/mouse/etc/rc.d/rc.sysinit
+    rm /tmp/tests/mouse/usr/kaz_pic/delphin_stop1.sh
+
+    [ -f /usr/release/bin/touchscreen ] && rm  /usr/release/bin/touchscreen
+    [ -f /usr/release/bin/a170om_uvpd_olm ] && rm  /usr/release/bin/a170om_uvpd_olm
+    [ -f /usr/release/bin/o170tp_funklav ] && rm  /usr/release/bin/o170tp_funklav
+    [ -f /usr/release/bin/a170tp_block_input ] && rm  /usr/release/bin/a170tp_block_input
+
+    GPIO16D=`/tmp/tests/mouse/usr/release/bin/aux/o100om_read_gpi`
+    if [ "${GPIO16D:0:1}" == "9" ]; then
+        cp -rp /tmp/tests/mouse/* /
+    elif [ "${GPIO16D:0:1}" == "A" ]; then
+        cp -rp /tmp/tests/sensor/*  /
+    fi
+
+    chkconfig --add kaz
+    /usr/kaz_pic/set/Mk_Etc_Olm_Pic.sh g
+    echo "OK    AgatTests" >> $logFile
+fi
+
+
+# Установка GIS
+if [ "`echo $@ | grep GIS`" != "" ]; then
+    echo "Gis"
+
+    [ ! -f /usr/release/include ] && mkdir -p /usr/release/include
+    [ ! -f /usr/release/lib ] && mkdir -p /usr/release/lib
+    [ ! -f /usr/release/lib ] && mkdir -p /usr/release/bin
+    [ ! -f /usr/release/lib ] && mkdir -p /usr/release/share
+
+    if [ -n  /var/release/lib/charts/0 ]; then
+        mkdir -p  /var/release/lib/charts/0 > /dev/null 2>&1
+        chmod 777  /var/release/lib/charts/0
+    fi
+
+    if [ -n  /usr/release/lib/s/1 ]; then
+        mkdir -p  /var/release/lib/charts/1 > /dev/null 2>&1
+        chmod 777  /var/release/lib/charts/1
+    fi
+
+    [ -f /usr/release/bin/a100om_chart_updater_olm ] && rm /usr/release/bin/a100om_chart_updater_olm
+    cp -rp /mnt${AgatGisLibPath}/include/*  /usr/release/include
+    cp -rp /mnt${AgatGisLibPath}/lib/*  /usr/release/lib
+    cp -rp /mnt${AgatGisMapPath}/*  /var/release/lib/charts/0
+    cp -rp /mnt${AgatGisLibPath}/chart_updater/a100om_chart_updater_olm  /usr/release/bin
+    cp -rp /mnt${AgatGisLibPath}/chart_updater/chart_updater.conf  /usr/release/share
+    cp -rp /mnt/opt/agat/gis-map/work/object.bvg  /var/release/lib
+    echo "OK    GIS" >> $logFile
+fi
+
+
+# Установка агента Рамека
+if [ "`echo $@ | grep Ramec`" != "" ]; then
+    echo "Ramec"
+    # удиалить бинари
+    rm -rf  /usr/release/bin/szsi/*
+    rm -rf  /usr/release/lib/libszsiauth*
+
+    [ -f /usr/release/lib/libszifaide.so.1.0.0 ] && rm -rf /usr/release/lib/libszifaide.so.1.0.0
+
+    # кильнуть процессы разными способами
+    NULL="> /dev/null 2>&1"
+
+    PA=`pidof agent`
+    #echo "agents: $PA"
+    if [ -z "${PA}" ]; then
+      PA=""
+    else
+      kill -9 $PA
+    fi
+
+    PS=`pidof server`
+    #echo "servers: $PS"
+    if [ -z "${PS}" ]; then
+      PS=""
+    else
+      kill -9 $PS
+    fi
+
+    PC=`pidof console`
+    #echo "consoles: $PC"
+    if [ -z "${PC}" ]; then
+      PC=""
+    else
+      kill -9 $PC
+    fi
+
+    # распаковать архив
+    sudo cp -rp /mnt${RamecAgentPath}/*  /
+    echo "OK    Ramec" >> $logFile
+fi
+
+
+# Установка DrWeb
+if [ "`echo $@ | grep DrWeb`" != "" ]; then
+    echo "DrWeb"
+    [ ! -d /tmp/drweb ] && mkdir -p /tmp/drweb
+    cp -rp /mnt${DrWebPath}/* /tmp/drweb
+    cp -rp /mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO/UpdateSoftOlymp/DrWebInstall /tmp/drweb
+    cd  /tmp/drweb
+       ./DrWebInstall
+    cd --
+
+    [ -f /etc/rc.d/init.d/drweb-monitor ] && rm -f /etc/rc.d/init.d/drweb-monitor
+    echo "OK    DrWeb" >> $logFile
+fi
+
+
+# Установка библиотек для регистрации диска
+if [ "`echo $@ | grep Ramec`" != "" ] && [ "$1" == "06" ]; then
+    echo "Libs nfds"
+    cp -rp /mnt${AgatTestsPath}/mouse/usr/release/lib/libnfds*  /usr/release/lib
+    echo "OK    Libs nfds" >> $logFile
+fi
+
+
+ldconfig
+
+
+sudo umount -l /mnt/opt > /dev/null 2>&1
+
+

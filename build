@@ -1,0 +1,156 @@
+#!/bin/bash
+
+# Если запущено без параметров, то выходим
+if [ "`echo $1`" == "" ]; then
+    exit
+fi
+
+echo -e "\nBuildig FPO\n"
+
+# Имя проекта
+PrjName="OLYMP-G"
+# Путь к SRC на серверее
+ServerSrcPath="/mnt/net/OLYMP-G/SRC/INTEL"
+# Путь к смонтированному ПО на приборе
+ServerFlashPath="/mnt/net/OLYMP-G/FLASH/INTEL"
+
+
+
+# Пересборка ASK
+if [ "`echo $@ | grep ASK_09`" != "" ]; then
+    echo "Building ASK 4.09"
+    cd $ServerSrcPath/09/ASK
+    ./makeASK
+    cd BIN
+    ./copyASKtoFLASH
+fi
+
+
+# Пересборка ASK SP
+if [ "`echo $@ | grep ASK09_SP`" != "" ]; then
+    echo "Building ASK 4.09 SP"
+    cd $ServerSrcPath/09/ASK
+    ./makeASK_SP
+    cd BIN_SP
+    ./copyASKtoFLASH_SP
+fi
+
+# Пересборка OGS_VP
+if [ "`echo $@ | grep OGS_VP`" != "" ]; then
+    echo "Building OGS_VP"
+    cd $ServerSrcPath/09/OGS_VP/work
+    ./m_ogs_msvs
+    cp -f ogs $ServerFlashPath/09/OGS_VP
+fi
+
+
+# Пересборка SGR
+if [ "`echo $@ | grep SGR`" != "" ]; then
+    echo "Building SGR"
+    cd $ServerSrcPath/09/SGR
+    ./makeSGR
+    ./copySGRtoFLASH
+fi
+
+
+# Пересборка SORD
+if [ "`echo $@ | grep SORD`" != "" ]; then
+    echo "Building SORD"
+    cd $ServerSrcPath/09/SORD
+    ./makeSORD.MCBC
+fi
+
+
+# Пересборка SPPR
+if [ "`echo $@ | grep SPPR`" != "" ]; then
+    echo "Building SPPR"
+    cd $ServerSrcPath/09/SPPR/work
+    ./m_sppr
+    ./copySORDtoFLASH
+fi
+
+
+# Пересборка ASK 06
+if [ "`echo $@ | grep ASK_06`" != "" ]; then
+    echo "Building ASK 06"
+    cd $ServerSrcPath/06/ASK
+    ./makeASK
+    ./copyASKtoFLASH
+fi
+
+
+# Пересборка ASK 06 SP
+if [ "`echo $@ | grep ASK06_SP`" != "" ]; then
+    echo "Building ASK 06 SP"
+    cd $ServerSrcPath/06.SP/ASK
+    ./makeASK
+    ./copyASKtoFLASH
+fi
+
+
+# Пересборка LDB_CLI
+if [ "`echo $@ | grep LDB_CLI06`" != "" ]; then
+    echo "Building LDB_CLI"
+    cd $ServerSrcPath/06/SUBD/ldb_cli
+    ./m
+    cp -f ldb_cli $ServerFlashPath/06/LDB_CLI
+fi
+
+
+# Пересборка LDB_CLI SP
+if [ "`echo $@ | grep LDB_CLISP`" != "" ]; then
+    echo "Building LDB_CLI SP"
+    cd $ServerSrcPath/06.SP/SUBD/ldb_cli
+    ./build
+    cp -f ldb_cli $ServerFlashPath/06.SP/LDB_CLI
+fi
+
+
+# Пересборка MSP
+if [ "`echo $@ | grep MSP`" != "" ]; then
+    echo "Building MSP"
+    cd $ServerSrcPath/06/MSP/work
+    make
+    cp -f sources/msp $ServerFlashPath/06/MSP
+fi
+
+
+# Пересборка SVS
+if [ "`echo $@ | grep SVS06`" != "" ]; then
+    echo "Building SVS"
+    cd $ServerSrcPath/06/SVS
+    ./mak
+    cp -f svs $ServerFlashPath/06/SVS
+    cp -f svs_exe $ServerFlashPath/06/SVS
+    cp -f kill_svs $ServerFlashPath/06/SVS
+fi
+
+
+# Пересборка SVS SP
+if [ "`echo $@ | grep SVS_SP`" != "" ]; then
+    echo "Building SVS SP"
+    cd $ServerSrcPath/06.SP/SVS
+    ./mak
+    cp -f svs $ServerFlashPath/06.SP/SVS
+    cp -f svs_exe $ServerFlashPath/06.SP/SVS
+    cp -f kill_svs $ServerFlashPath/06.SP/SVS
+fi
+
+
+
+echo -e "\nBuilding end!\n"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
