@@ -10,7 +10,11 @@ public class PingHostsSecond extends javax.swing.JFrame {
     private static final String dirPngGreen="png/green.png";
     private static final String dirPngRed="png/red.png";
     private static boolean reachable;
-    private static final String ipList="10.3.6.70 10.3.6.71 10.3.6.72 10.3.6.73 10.3.6.74 10.3.6.75 10.3.6.76 10.3.6.77 10.3.6.99";
+    private static final String ipList=DeviceIp.DEVICE1.getSecondIp() + " " + DeviceIp.DEVICE2.getSecondIp() + " " +
+            DeviceIp.DEVICE3.getSecondIp() + " " + DeviceIp.DEVICE4.getSecondIp() + " " +
+            DeviceIp.DEVICE5.getSecondIp() + " " + DeviceIp.DEVICE6.getSecondIp() + " " +
+            DeviceIp.DEVICE7.getSecondIp() + " " + DeviceIp.DEVICE8.getSecondIp() + " " +
+            DeviceIp.DEVICE9.getSecondIp();
 
     public PingHostsSecond() {
         super("10.3.6.0");

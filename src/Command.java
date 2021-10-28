@@ -34,16 +34,7 @@ public class Command extends javax.swing.JFrame{
 
             // Пробежка по каждой машине
             for (String ip:ip_list.split(" ")) {
-
-                String command = "sshpass -p wizard ssh root@" + ip + " \"" + jTextAreaBrib.getText() + "\"";
-                try {
-                    Process threadBash = Runtime.getRuntime().exec(new String[]{"/bin/bash", "-c", command});
-                    threadBash.waitFor();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                } catch (InterruptedException e2) {
-                    e2.printStackTrace();
-                }
+                BashCommand.pushCommand("sshpass -p wizard ssh root@" + ip + " \"" + jTextAreaBrib.getText() + "\"");
             }
             System.exit(0);
         });

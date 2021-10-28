@@ -8,7 +8,7 @@ import java.net.UnknownHostException;
 public class BortName extends javax.swing.JFrame {
 
     public BortName() {
-        super("10.3.6.0");
+        super("Замена номера борта");
         this.setSize(new Dimension(450,100));
         this.setLocation(400,420);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -34,15 +34,8 @@ public class BortName extends javax.swing.JFrame {
 
         button1.addActionListener(e -> {
             setVisible(false);
-            String command="a=`cat ../../rconf/rconf_OLYMP-G.dan | awk '{print $8}' | awk -F'.' '{print $1}' | sed 1,2d | head -n1`; sed -i \"s/$a/" + jTextAreaBort.getText() + "/g\"  ../../rconf/rconf_OLYMP-G.dan";
-            try {
-                Process threadBash = Runtime.getRuntime().exec(new String[]{"/bin/bash", "-c", command});
-                threadBash.waitFor();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            } catch (InterruptedException e2) {
-                e2.printStackTrace();
-            }
+            BashCommand.pushCommand("a=`cat ../../rconf/rconf_OLYMP-G.dan | awk '{print $8}' | awk -F'.' '{print $1}' | sed 1,2d | head -n1`;" +
+                    " sed -i \"s/$a/" + jTextAreaBort.getText() + "/g\"  ../../rconf/rconf_OLYMP-G.dan");
             // Выход из программы
             System.exit(0);
         });

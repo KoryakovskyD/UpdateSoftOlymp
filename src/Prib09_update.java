@@ -234,42 +234,16 @@ public class Prib09_update extends javax.swing.JFrame {
             // Пробежка по каждой машине
             for (String ip:ip_list.split(" ")) {
 
-                String command3 = "sshpass -p wizard ssh root@" + ip + " \"mkdir -p /mnt/net; sudo mount 10.4.6.55:/home/PROJECTS /mnt/net; /mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO/UpdateSoftOlymp/" + command + "; sudo umount -l /mnt/net\"";
-                // Запуск скрипта update_soft
-                try {
-                    Process threadBash = Runtime.getRuntime().exec(new String[]{"/bin/bash", "-c", command3});
-                    threadBash.waitFor();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                } catch (InterruptedException e2) {
-                    e2.printStackTrace();
-                }
+                BashCommand.pushCommand("sshpass -p wizard ssh root@" + ip + " \"mkdir -p /mnt/net; sudo mount " +
+                        DeviceIp.SERVER.getIp() + ":/home/PROJECTS /mnt/net; /mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO/UpdateSoftOlymp/" +
+                        command + "; sudo umount -l /mnt/net\"");
 
-                String comandInstallOtherPO = "sshpass -p wizard ssh root@" + ip + " \"sudo mount 10.4.6.55:/home/PROJECTS /mnt/net; /mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO/UpdateSoftOlymp/" + installOtherPO + "; sudo umount -l /mnt/net\"";
-                // Запуск скрипта update_soft
-                try {
-                    Process threadBash = Runtime.getRuntime().exec(new String[]{"/bin/bash", "-c", comandInstallOtherPO});
-                    threadBash.waitFor();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                } catch (InterruptedException e2) {
-                    e2.printStackTrace();
-                }
+                BashCommand.pushCommand("sshpass -p wizard ssh root@" + ip + " \"sudo mount " +
+                        DeviceIp.SERVER.getIp() + ":/home/PROJECTS /mnt/net; /mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO/UpdateSoftOlymp/" +
+                        installOtherPO + "; sudo umount -l /mnt/net\"");
 
-                String comandCCS = "sshpass -p wizard ssh root@" + ip + " \"sudo mount 10.4.6.55:/home/PROJECTS /mnt/net; cd /mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO/ccs; ./ccs; sudo umount -l /mnt/net\"";
-                // Запуск скрипта ccs
-                if (checkBoxCCS.isSelected()) {
-                   try {
-                       Process threadBash = Runtime.getRuntime().exec(new String[]{"/bin/bash", "-c", comandCCS});
-                       threadBash.waitFor();
-                   } catch (IOException e1) {
-                      e1.printStackTrace();
-                   } catch (InterruptedException e2) {
-                      e2.printStackTrace();
-                   }
-                }
-
-
+                BashCommand.pushCommand("sshpass -p wizard ssh root@" + ip + " \"sudo mount " + DeviceIp.SERVER.getIp() +
+                        ":/home/PROJECTS /mnt/net; cd /mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO/ccs; ./ccs; sudo umount -l /mnt/net\"");
             }
 
 

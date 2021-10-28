@@ -10,7 +10,9 @@ public class PingHosts extends javax.swing.JFrame {
 
     private static final String dirPngGreen="png/green.png";
     private static final String dirPngRed="png/red.png";
-    private static final String ipList="10.4.6.70 10.4.6.71 10.4.6.72 10.4.6.73 10.4.6.74 10.4.6.75 10.4.6.76 10.4.6.77 10.3.6.99";
+    private static final String ipList=DeviceIp.DEVICE1.getIp() + " " + DeviceIp.DEVICE2.getIp() + " " + DeviceIp.DEVICE3.getIp() + " " +
+            DeviceIp.DEVICE4.getIp() + " " + DeviceIp.DEVICE5.getIp() + " " + DeviceIp.DEVICE6.getIp() + " " +
+            DeviceIp.DEVICE7.getIp() + " " + DeviceIp.DEVICE8.getIp() + " " + DeviceIp.DEVICE9.getIp();
     private static boolean reachable;
 
     public PingHosts() {

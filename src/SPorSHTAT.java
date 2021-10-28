@@ -3,8 +3,6 @@ import java.awt.*;
 import java.io.IOException;
 
 public class SPorSHTAT extends javax.swing.JFrame{
-
-
     public SPorSHTAT() {
         super("SP или SHTAT");
         this.setBounds(500, 500, 480, 150);
@@ -35,13 +33,10 @@ public class SPorSHTAT extends javax.swing.JFrame{
         });
     }
 
-
-
     public static void start(int num){
         // Список ip-адресов выбранных прибор
         String ip_list = ChangePrib.getIp_list();
         String command;
-
 
         if (num == 1) {
             command="touch /home/mfp/SP_MODE";
@@ -49,22 +44,10 @@ public class SPorSHTAT extends javax.swing.JFrame{
             command="rm /home/mfp/SP_MODE";
         }
 
-
         // Пробежка по каждой машине
         for (String ip:ip_list.split(" ")) {
-
-            String command3 = "sshpass -p wizard ssh root@" + ip + " \"" + command + "\"";
-            // Запуск скрипта update_soft
-            try {
-                Process threadBash = Runtime.getRuntime().exec(new String[]{"/bin/bash", "-c", command3});
-                threadBash.waitFor();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            } catch (InterruptedException e2) {
-                e2.printStackTrace();
-            }
+            BashCommand.pushCommand("sshpass -p wizard ssh root@" + ip + " \"" + command + "\"");
         }
-
         System.exit(0);
     }
 }

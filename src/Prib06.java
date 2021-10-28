@@ -5,7 +5,7 @@ import java.io.IOException;
 public class Prib06 extends javax.swing.JFrame {
 
     public Prib06() {
-        super("Прибор 6.06");
+        super(DeviceIp.DEVICE9.getComment());
         this.setBounds(450,450,410,550);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -227,41 +227,17 @@ public class Prib06 extends javax.swing.JFrame {
             Wait wait = new Wait();
             wait.setVisible(true);
 
+            BashCommand.pushCommand("sshpass -p wizard ssh root@" + DeviceIp.DEVICE9.getIp() + " \"mkdir -p /mnt/net; mount " +
+                    DeviceIp.SERVER.getSecondIp() + ":/home/PROJECTS /mnt/net; /mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO/UpdateSoftOlymp/" +
+                    command + "; sudo umount -l /mnt/net\"");
 
-            String command3="sshpass -p wizard ssh root@10.3.6.99 \"mkdir -p /mnt/net; mount 10.3.6.55:/home/PROJECTS /mnt/net; /mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO/UpdateSoftOlymp/" + command + "; sudo umount -l /mnt/net\"";
-            // Запуск скрипта update_soft
-            try {
-                Process threadBash = Runtime.getRuntime().exec(new String[]{"/bin/bash", "-c", command3});
-                threadBash.waitFor();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            } catch (InterruptedException e2) {
-                e2.printStackTrace();
-            }
+            BashCommand.pushCommand("sshpass -p wizard ssh root@" + DeviceIp.DEVICE9.getIp() + " \"mkdir -p /mnt/net; mount " +
+                    DeviceIp.SERVER.getSecondIp() + ":/home/PROJECTS /mnt/net; /mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO/UpdateSoftOlymp/" +
+                    installOtherPO + "; sudo umount -l /mnt/net\"");
 
-            String command4="sshpass -p wizard ssh root@10.3.6.99 \"mkdir -p /mnt/net; mount 10.3.6.55:/home/PROJECTS /mnt/net; /mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO/UpdateSoftOlymp/" + installOtherPO + "; sudo umount -l /mnt/net\"";
-            // Запуск скрипта update_soft
-            try {
-                Process threadBash = Runtime.getRuntime().exec(new String[]{"/bin/bash", "-c", command4});
-                threadBash.waitFor();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            } catch (InterruptedException e2) {
-                e2.printStackTrace();
-            }
-
-            String comandCCS = "sshpass -p wizard ssh root@10.3.6.99 \"mkdir -p /mnt/net; mount 10.3.6.55:/home/PROJECTS /mnt/net; cd /mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO/ccs; ./ccs; cd /mnt/net/OLYMP-G/FLASH.TU/INTEL/06/6.06/SPO/ccs; ./ccs; sudo umount -l /mnt/net\"";
-            // Запуск скрипта ccs
-            if (checkBoxCCS.isSelected()) {
-               try {
-                   Process threadBash = Runtime.getRuntime().exec(new String[]{"/bin/bash", "-c", comandCCS});
-                   threadBash.waitFor();
-               } catch (IOException e1) {
-                  e1.printStackTrace();
-               } catch (InterruptedException e2) {
-                  e2.printStackTrace();
-               }
-            }
+            BashCommand.pushCommand("sshpass -p wizard ssh root@" + DeviceIp.DEVICE9.getIp() + " \"mkdir -p /mnt/net; mount " + DeviceIp.SERVER.getSecondIp() +
+                    ":/home/PROJECTS /mnt/net; cd /mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO/ccs; ./ccs; cd /mnt/net/OLYMP-G/FLASH.TU/INTEL/06/6.06/SPO/ccs;" +
+                    " ./ccs; sudo umount -l /mnt/net\"");
 
 
             JOptionPane.showMessageDialog(null, "Обновление успешно завершено!");

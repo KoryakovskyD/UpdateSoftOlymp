@@ -15,7 +15,7 @@ public class Build extends javax.swing.JFrame {
 
         JLabel labelPrib = new JLabel(" Прибор для пересборки");
         labelPrib.setFont(new Font("Calibri", Font.PLAIN, 18));
-        JTextArea jTextAreaBrib = new JTextArea("10.4.6.74");
+        JTextArea jTextAreaBrib = new JTextArea(DeviceIp.DEVICE5.getIp());
         jTextAreaBrib.setFont(new Font("Calibri", Font.PLAIN, 18));
         JLabel line1 = new JLabel("--------------------------");
         line1.setFont(new Font("Calibri", Font.PLAIN, 20));
@@ -200,17 +200,8 @@ public class Build extends javax.swing.JFrame {
             Wait wait = new Wait();
             wait.setVisible(true);
 
-
-            String command3="sshpass -p wizard ssh root@" + IpPrib + " \"sudo mount 10.4.6.55:/home/PROJECTS /mnt/net; /mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO/UpdateSoftOlymp/" + command + "; sudo umount -l /mnt/net\"";
-            // Запуск скрипта build
-            try {
-                Process threadBash = Runtime.getRuntime().exec(new String[]{"/bin/bash", "-c", command3});
-                threadBash.waitFor();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            } catch (InterruptedException e2) {
-                e2.printStackTrace();
-            }
+            BashCommand.pushCommand("sshpass -p wizard ssh root@" + IpPrib + " \"sudo mount " + DeviceIp.SERVER.getIp() +
+                    ":/home/PROJECTS /mnt/net; /mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO/UpdateSoftOlymp/" + command + "; sudo umount -l /mnt/net\"");
 
             JOptionPane.showMessageDialog(null, "Пересборка успешно завершена!");
             // Выход из программы
