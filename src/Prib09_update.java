@@ -242,6 +242,7 @@ public class Prib09_update extends javax.swing.JFrame {
                         DeviceIp.SERVER.getIp() + ":/home/PROJECTS /mnt/net; /mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO/UpdateSoftOlymp/" +
                         installOtherPO + "; sudo umount -l /mnt/net\"");
 
+                if (checkBoxCCS.isSelected())
                 BashCommand.pushCommand("sshpass -p wizard ssh root@" + ip + " \"sudo mount " + DeviceIp.SERVER.getIp() +
                         ":/home/PROJECTS /mnt/net; cd /mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO/ccs; ./ccs; sudo umount -l /mnt/net\"");
             }
