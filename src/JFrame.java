@@ -2,7 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 
-
 public class JFrame extends javax.swing.JFrame {
 
     public JFrame() {
@@ -108,7 +107,6 @@ public class JFrame extends javax.swing.JFrame {
             changePrib.setVisible(true);
         });
     }
-
 
     public static void check(String str){
         if (new File(str).isFile() == false) {

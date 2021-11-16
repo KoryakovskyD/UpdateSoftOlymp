@@ -19,15 +19,11 @@ public class Command extends javax.swing.JFrame{
         JButton button1 = new JButton("Далее");
         JButton button2 = new JButton("Назад");
 
-
-
         container.add(labelPrib);
         container.add(jScrollPane);
         container.add(button2);
         container.add(button1);
 
-
-        // Кнопка назад
         button1.addActionListener(e -> {
             // Список ip-адресов выбранных прибор
             String ip_list = ChangePrib.getIp_list();

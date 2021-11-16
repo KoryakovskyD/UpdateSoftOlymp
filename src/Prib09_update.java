@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 
 public class Prib09_update extends javax.swing.JFrame {
 
@@ -134,106 +133,87 @@ public class Prib09_update extends javax.swing.JFrame {
 
 
         button1.addActionListener(e -> {
-
+                                //                      ПО работяг                    //
             String command = "update 09 ";
 
-            //                      ПО работяг                    //
             // Копирование ASK
-            if (checkBoxASK.isSelected()) {
+            if (checkBoxASK.isSelected())
                 command = command + "ASK ";
-            }
 
             // Копирование OGS_VP
-            if (checkBoxOGS_VP.isSelected()) {
+            if (checkBoxOGS_VP.isSelected())
                 command = command + "OGS_VP ";
-            }
 
             // Копирование SGR
-            if (checkBoxSGR.isSelected()) {
+            if (checkBoxSGR.isSelected())
                 command = command + "SGR ";
-            }
+
             // Копирование SORD
-            if (checkBoxSORD.isSelected()) {
+            if (checkBoxSORD.isSelected())
                 command = command + "SORD ";
-            }
 
             // Копирование SORD_TECH
-            if (checkBoxSORD_TECH.isSelected()) {
+            if (checkBoxSORD_TECH.isSelected())
                 command = command + "SORD_TECH ";
-            }
 
             // Копирование SPPR_FMO
-            if (checkBoxSPPR_FMO.isSelected()) {
+            if (checkBoxSPPR_FMO.isSelected())
                 command = command + "SPPR_FMO ";
-            }
 
             // Копирование SP
-            if (checkBoxSP.isSelected()) {
+            if (checkBoxSP.isSelected())
                 command = command + "SP_MODE ";
-            }
 
-
-            //                    Системное ПО                   //
+                             //                    Системное ПО                   //
             // Копирование TSYNC
-            if (checkBoxTSYNC.isSelected()) {
+            if (checkBoxTSYNC.isSelected())
                 command = command + "TSYNC ";
-            }
 
             // Копирование SysFiles
-            if (checkBoxSysFiles.isSelected()) {
+            if (checkBoxSysFiles.isSelected())
                 command = command + "SysFiles ";
-            }
 
             // Копирование файла start_po_mfp
-            if (checkBoxStartPO.isSelected()) {
+            if (checkBoxStartPO.isSelected())
                 command = command + "start_po_mfp ";
-            }
 
             // Копирование системнго ПО
-            if (checkBoxSYS_SPO.isSelected()) {
+            if (checkBoxSYS_SPO.isSelected())
                 command = command + "SYS_SPO ";
-            }
 
 
+                                  //                    Заимствованное ПО              //
             String installOtherPO = "install_another_po 09 ";
-            //                    Заимствованное ПО              //
+
             // Копирование тестов Агата
-            if (checkBoxAgatTests.isSelected()) {
+            if (checkBoxAgatTests.isSelected())
                 installOtherPO = installOtherPO + "AgatTests ";
-            }
 
             // Копирование агента Рамека
-            if (checkBoxRamec.isSelected()) {
+            if (checkBoxRamec.isSelected())
                 installOtherPO = installOtherPO + "Ramec ";
-            }
 
             // Копирование агента Рамека
-            if (checkBoxDrWeb.isSelected()) {
+            if (checkBoxDrWeb.isSelected())
                 installOtherPO = installOtherPO + "DrWeb ";
-            }
 
             // Копирование карт GIS
-            if (checkBoxGIS.isSelected()) {
+            if (checkBoxGIS.isSelected())
                 installOtherPO = installOtherPO + "GIS ";
-            }
 
             // Прошивка
-            if (checkBoxAll.isSelected()) {
+            if (checkBoxAll.isSelected())
                 command = "update 09 All ASK OGS_VP SGR SORD SORD_TECH SPPR_FMO SP_MODE TSYNC SysFiles start_po_mfp SYS_SPO";
-            }
 
-
-            // Список ip-адресов выбранных прибор
+            // Список ip-адресов выбранных приборов
             String ip_list = ChangePrib.getIp_list();
 
             // Запуск окна "Пожалуйста, подождите"
             Wait wait = new Wait();
             wait.setVisible(true);
 
-
             // Пробежка по каждой машине
             for (String ip:ip_list.split(" ")) {
-
                 BashCommand.pushCommand("sshpass -p wizard ssh root@" + ip + " \"mkdir -p /mnt/net; sudo mount " +
                         DeviceIp.SERVER.getIp() + ":/home/PROJECTS /mnt/net; /mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO/UpdateSoftOlymp/" +
                         command + "; sudo umount -l /mnt/net\"");
@@ -247,7 +227,6 @@ public class Prib09_update extends javax.swing.JFrame {
                         ":/home/PROJECTS /mnt/net; cd /mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO/ccs; ./ccs; sudo umount -l /mnt/net\"");
             }
 
-
             JOptionPane.showMessageDialog(null, "Обновление успешно завершено!");
 
             wait.setVisible(false);
@@ -256,7 +235,6 @@ public class Prib09_update extends javax.swing.JFrame {
             System.exit(0);
         });
 
-
         // Кнопка назад
         button2.addActionListener(e -> {
             ChangePrib.setIp_list("");
@@ -264,7 +242,5 @@ public class Prib09_update extends javax.swing.JFrame {
             ChangePrib frame = new ChangePrib(2);
             frame.setVisible(true);
         });
-
     }
-
 }

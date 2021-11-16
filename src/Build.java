@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 
 public class Build extends javax.swing.JFrame {
 
@@ -68,10 +67,6 @@ public class Build extends javax.swing.JFrame {
         labelAll.setFont(new Font("Calibri", Font.PLAIN, 18));
         JCheckBox checkBoxAll = new JCheckBox("",false);
 
-
-
-
-
         JButton button1 = new JButton("Далее");
         JButton button2 = new JButton("Назад");
 
@@ -113,88 +108,67 @@ public class Build extends javax.swing.JFrame {
         container.add(button1);
 
 
-
-
-
         button1.addActionListener(e -> {
-
 
             String IpPrib=jTextAreaBrib.getText();
             String command = "build ";
 
-            //                         ПО работяг                       //
+                               //                         ПО работяг                       //
             // Пересборка ASK
-            if (checkBoxASK.isSelected()) {
+            if (checkBoxASK.isSelected())
                 command = command + "ASK_09 ";
-            }
 
             // Пересборка ASK_SP
-            if (checkBoxASK_SP.isSelected()) {
+            if (checkBoxASK_SP.isSelected())
                 command = command + "ASK09_SP ";
-            }
 
             // Пересборка OGS_VP
-            if (checkBoxOGS_VP.isSelected()) {
+            if (checkBoxOGS_VP.isSelected())
                 command = command + "OGS_VP ";
-            }
 
             // Пересборка SGR
-            if (checkBoxSGR.isSelected()) {
+            if (checkBoxSGR.isSelected())
                 command = command + "SGR ";
-            }
 
             // Пересборка SORD
-            if (checkBoxSORD.isSelected()) {
+            if (checkBoxSORD.isSelected())
                 command = command + "SORD ";
-            }
 
             // Пересборка SPPR
-            if (checkBoxSPPR.isSelected()) {
+            if (checkBoxSPPR.isSelected())
                 command = command + "SPPR ";
-            }
 
             // Пересборка ASK_06
-            if (checkBoxASK_06.isSelected()) {
+            if (checkBoxASK_06.isSelected())
                 command = command + "ASK_06 ";
-            }
 
             // Пересборка ASK_06_SP
-            if (checkBoxASK_06_SP.isSelected()) {
+            if (checkBoxASK_06_SP.isSelected())
                 command = command + "ASK06_SP ";
-            }
 
             // Пересборка LDB_CLI
-            if (checkBoxLDB_CLI.isSelected()) {
+            if (checkBoxLDB_CLI.isSelected())
                 command = command + "LDB_CLI06 ";
-            }
 
             // Пересборка LDB_CLI_SP
-            if (checkBoxLDB_CLI_SP.isSelected()) {
+            if (checkBoxLDB_CLI_SP.isSelected())
                 command = command + "LDB_CLISP ";
-            }
 
             // Пересборка MSP
-            if (checkBoxMSP.isSelected()) {
+            if (checkBoxMSP.isSelected())
                 command = command + "MSP ";
-            }
 
             // Пересборка SVS
-            if (checkBoxSVS.isSelected()) {
+            if (checkBoxSVS.isSelected())
                 command = command + "SVS06 ";
-            }
 
             // Пересборка SVS_SP
-            if (checkBoxSVS_SP.isSelected()) {
+            if (checkBoxSVS_SP.isSelected())
                 command = command + "SVS_SP ";
-            }
-
-
 
             // Полное обновление
-            if (checkBoxAll.isSelected()) {
+            if (checkBoxAll.isSelected())
                 command = "build ASK_09 ASK09_SP OGS_VP SGR SORD SPPR ASK_06 ASK06_SP LDB_CLI06 LDB_CLISP MSP SVS06 SVS_SP";
-            }
-
 
             // Запуск окна "Пожалуйста, подождите"
             Wait wait = new Wait();
@@ -208,14 +182,11 @@ public class Build extends javax.swing.JFrame {
             System.exit(0);
         });
 
-
         // Кнопка назад
         button2.addActionListener(e -> {
             setVisible(false);
             JFrame frame = new JFrame();
             frame.setVisible(true);
         });
-
     }
-
 }

@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 
 public class Prib06 extends javax.swing.JFrame {
 
@@ -132,78 +131,64 @@ public class Prib06 extends javax.swing.JFrame {
 
 
         button1.addActionListener(e -> {
-
+                                   //                         ПО работяг                       //
             String command = "update 06 ";
 
-            //                         ПО работяг                       //
             // Копирование ASK
-            if (checkBoxASK.isSelected()) {
+            if (checkBoxASK.isSelected())
                 command = command + "ASK ";
-            }
 
             // Копирование LDB_CLI
-            if (checkBoxLDB_CLI.isSelected()) {
+            if (checkBoxLDB_CLI.isSelected())
                 command = command + "LDB_CLI ";
-            }
+
             // Копирование MSP
-            if (checkBoxMSP.isSelected()) {
+            if (checkBoxMSP.isSelected())
                 command = command + "MSP ";
-            }
 
             // Копирование SVS
-            if (checkBoxSVS.isSelected()) {
+            if (checkBoxSVS.isSelected())
                 command = command + "SVS ";
-            }
 
             // Копирование SP
-            if (checkBoxSP.isSelected()) {
+            if (checkBoxSP.isSelected())
                 command = command + "SP ";
-            }
 
             // Копирование TU
-            if (checkBoxTU.isSelected()) {
+            if (checkBoxTU.isSelected())
                 command = command + "TU ";
-            }
 
-
-            //                       Системное СПО                     //
+                                //                       Системное СПО                     //
             // Копирование TSYNC
-            if (checkBoxTSYNC.isSelected()) {
+            if (checkBoxTSYNC.isSelected())
                 command = command + "TSYNC ";
-            }
 
             // Копирование MSE
-            if (checkBoxMSE.isSelected()) {
+            if (checkBoxMSE.isSelected())
                 command = command + "MSE ";
-            }
 
             // Копирование SysFiles
-            if (checkBoxSysFiles.isSelected()) {
+            if (checkBoxSysFiles.isSelected())
                 command = command + "SysFiles ";
-            }
 
             // Копирование файла start_po_mfp
-            if (checkBoxStartPO.isSelected()) {
+            if (checkBoxStartPO.isSelected())
                 command = command + "start_po_mfp ";
-            }
 
             // Копирование rconf
-            if (checkBoxRconf.isSelected()) {
+            if (checkBoxRconf.isSelected())
                 command = command + "rconf ";
-            }
 
+
+                                  //                      Заимствованное ПО                  //
             String installOtherPO = "install_another_po 06 ";
-            //                      Заимствованное ПО                  //
             // Копирование DrWeb
-            if (checkBoxDWeb.isSelected()) {
-                //installOtherPO = "DrWebInstall";
+            if (checkBoxDWeb.isSelected())
                 installOtherPO = installOtherPO + "DrWeb ";
-            }
 
             // Копирование агента Ramec
-            if (checkBoxRamec.isSelected()) {
+            if (checkBoxRamec.isSelected())
                 installOtherPO = installOtherPO + "Ramec ";
-            }
 
             // Копирование базы данных Linter
             if (checkBoxlinter.isSelected()) {
@@ -211,16 +196,14 @@ public class Prib06 extends javax.swing.JFrame {
             }
 
             // Копирование апдейтера GIS
-            if (checkBoxGIS.isSelected()) {
+            if (checkBoxGIS.isSelected())
                 installOtherPO = installOtherPO + "GIS ";
-            }
 
 
 
             // Прошивка
-            if (checkBoxAll.isSelected()) {
+            if (checkBoxAll.isSelected())
                 command = "update 06 All ASK LDB_CLI MSP SVS SP TU TSYNC MSE SysFiles start_po_mfp rconf";
-            }
 
 
             // Запуск окна "Пожалуйста, подождите"
@@ -235,16 +218,15 @@ public class Prib06 extends javax.swing.JFrame {
                     DeviceIp.SERVER.getSecondIp() + ":/home/PROJECTS /mnt/net; /mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO/UpdateSoftOlymp/" +
                     installOtherPO + "; sudo umount -l /mnt/net\"");
 
+            if (checkBoxCCS.isSelected())
             BashCommand.pushCommand("sshpass -p wizard ssh root@" + DeviceIp.DEVICE9.getIp() + " \"mkdir -p /mnt/net; mount " + DeviceIp.SERVER.getSecondIp() +
                     ":/home/PROJECTS /mnt/net; cd /mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO/ccs; ./ccs; cd /mnt/net/OLYMP-G/FLASH.TU/INTEL/06/6.06/SPO/ccs;" +
                     " ./ccs; sudo umount -l /mnt/net\"");
-
 
             JOptionPane.showMessageDialog(null, "Обновление успешно завершено!");
             // Выход из программы
             System.exit(0);
         });
-
 
         // Кнопка назад
         button2.addActionListener(e -> {
@@ -252,7 +234,5 @@ public class Prib06 extends javax.swing.JFrame {
             JFrame frame = new JFrame();
             frame.setVisible(true);
         });
-
     }
-
 }

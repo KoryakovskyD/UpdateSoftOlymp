@@ -75,46 +75,36 @@ public class ChangePrib extends javax.swing.JFrame {
         container.add(button1);
 
 
-
         button1.addActionListener(e -> {
 
-            if (checkBoxPr70.isSelected()) {
+            if (checkBoxPr70.isSelected())
                 ip_list=ip_list + DeviceIp.DEVICE1.getIp() + " ";
-            }
 
-            if (checkBoxPr71.isSelected()) {
+            if (checkBoxPr71.isSelected())
                 ip_list=ip_list + DeviceIp.DEVICE2.getIp() + " ";
-            }
 
-            if (checkBoxPr72.isSelected()) {
+            if (checkBoxPr72.isSelected())
                 ip_list=ip_list + DeviceIp.DEVICE3.getIp() + " ";
-            }
 
-            if (checkBoxPr73.isSelected()) {
+            if (checkBoxPr73.isSelected())
                 ip_list=ip_list + DeviceIp.DEVICE4.getIp() + " ";
-            }
 
-            if (checkBoxPr74.isSelected()) {
+            if (checkBoxPr74.isSelected())
                 ip_list=ip_list + DeviceIp.DEVICE5.getIp() + " ";
-            }
 
-            if (checkBoxPr75.isSelected()) {
+            if (checkBoxPr75.isSelected())
                 ip_list=ip_list + DeviceIp.DEVICE6.getIp() + " ";
-            }
 
-            if (checkBoxPr76.isSelected()) {
+            if (checkBoxPr76.isSelected())
                 ip_list=ip_list + DeviceIp.DEVICE7.getIp() + " ";
-            }
 
-            if (checkBoxPr77.isSelected()) {
+            if (checkBoxPr77.isSelected())
                 ip_list=ip_list + DeviceIp.DEVICE8.getIp() + " ";
-            }
 
-            if (checkBoxAll.isSelected()) {
+            if (checkBoxAll.isSelected())
                 ip_list=ip_list + DeviceIp.DEVICE1.getIp() + " " + DeviceIp.DEVICE2.getIp() + " " + DeviceIp.DEVICE3.getIp() + " " +
                         DeviceIp.DEVICE4.getIp() + " " + DeviceIp.DEVICE5.getIp() + " " + DeviceIp.DEVICE6.getIp() + " " +
                         DeviceIp.DEVICE7.getIp() + " " + DeviceIp.DEVICE8.getIp();
-            }
 
 
             // Открытие консолей
@@ -178,7 +168,6 @@ public class ChangePrib extends javax.swing.JFrame {
                 Command command = new Command();
                 command.setVisible(true);
             }
-
         });
 
         button2.addActionListener(e -> {
@@ -186,7 +175,5 @@ public class ChangePrib extends javax.swing.JFrame {
             JFrame frame = new JFrame();
             frame.setVisible(true);
         });
-
     }
-
 }
