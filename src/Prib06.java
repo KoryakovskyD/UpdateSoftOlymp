@@ -4,7 +4,7 @@ import java.awt.*;
 public class Prib06 extends javax.swing.JFrame {
 
     public Prib06() {
-        super(DeviceIp.DEVICE9.getComment());
+        super(IpListIntel.DEVICE9.getComment());
         this.setBounds(450,450,410,550);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -210,16 +210,16 @@ public class Prib06 extends javax.swing.JFrame {
             Wait wait = new Wait();
             wait.setVisible(true);
 
-            BashCommand.pushCommand("sshpass -p wizard ssh root@" + DeviceIp.DEVICE9.getIp() + " \"mkdir -p /mnt/net; mount " +
-                    DeviceIp.SERVER.getSecondIp() + ":/home/PROJECTS /mnt/net; /mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO/UpdateSoftOlymp/" +
+            BashCommand.pushCommand("sshpass -p wizard ssh root@" + IpListIntel.DEVICE9.getIp() + " \"mkdir -p /mnt/net; mount " +
+                    IpListIntel.SERVER.getSecondIp() + ":/home/PROJECTS /mnt/net; /mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO/UpdateSoftOlymp/" +
                     command + "; sudo umount -l /mnt/net\"");
 
-            BashCommand.pushCommand("sshpass -p wizard ssh root@" + DeviceIp.DEVICE9.getIp() + " \"mkdir -p /mnt/net; mount " +
-                    DeviceIp.SERVER.getSecondIp() + ":/home/PROJECTS /mnt/net; /mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO/UpdateSoftOlymp/" +
+            BashCommand.pushCommand("sshpass -p wizard ssh root@" + IpListIntel.DEVICE9.getIp() + " \"mkdir -p /mnt/net; mount " +
+                    IpListIntel.SERVER.getSecondIp() + ":/home/PROJECTS /mnt/net; /mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO/UpdateSoftOlymp/" +
                     installOtherPO + "; sudo umount -l /mnt/net\"");
 
             if (checkBoxCCS.isSelected())
-            BashCommand.pushCommand("sshpass -p wizard ssh root@" + DeviceIp.DEVICE9.getIp() + " \"mkdir -p /mnt/net; mount " + DeviceIp.SERVER.getSecondIp() +
+            BashCommand.pushCommand("sshpass -p wizard ssh root@" + IpListIntel.DEVICE9.getIp() + " \"mkdir -p /mnt/net; mount " + IpListIntel.SERVER.getSecondIp() +
                     ":/home/PROJECTS /mnt/net; cd /mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO/ccs; ./ccs; cd /mnt/net/OLYMP-G/FLASH.TU/INTEL/06/6.06/SPO/ccs;" +
                     " ./ccs; sudo umount -l /mnt/net\"");
 

@@ -6,7 +6,7 @@ public class JFrame extends javax.swing.JFrame {
 
     public JFrame() {
         super("Обновление СПО и ФПО заказа Олимп-Г.");
-        this.setBounds(500,500,750,280);
+        this.setBounds(500,500,770,280);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         Container container = this.getContentPane();
@@ -45,6 +45,7 @@ public class JFrame extends javax.swing.JFrame {
         container.add(button8);
         container.add(button9);
 
+
         button1.addActionListener(e -> {
             setVisible(false);
             check("/bin/sshpass");
@@ -58,6 +59,7 @@ public class JFrame extends javax.swing.JFrame {
             Prib06 prib06 = new Prib06();
             prib06.setVisible(true);
         });
+
 
         button3.addActionListener(e -> {
             PingHosts pingHosts = new PingHosts();

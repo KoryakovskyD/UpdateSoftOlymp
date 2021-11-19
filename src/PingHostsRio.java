@@ -3,30 +3,15 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.EnumSet;
 
 
 public class PingHostsRio extends javax.swing.JFrame {
 
     private static final String dirPngGreen="png/green.png";
     private static final String dirPngRed="png/red.png";
-    private static boolean reachable;
-    private static final String ipList= DeviceIp.RIO1.getComment() + ":" + DeviceIp.RIO1.getIp() + " " +
-            DeviceIp.RIO2.getComment() + ":" + DeviceIp.RIO2.getIp() + " " +
-            DeviceIp.RIO3.getComment() + ":" + DeviceIp.RIO3.getIp() + " " +
-            DeviceIp.RIO4.getComment() + ":" + DeviceIp.RIO4.getIp() + " " +
-            DeviceIp.RIO5.getComment() + ":" + DeviceIp.RIO5.getIp() + " " +
-            DeviceIp.RIO6.getComment() + ":" + DeviceIp.RIO6.getIp() + " " +
-            DeviceIp.RIO7.getComment() + ":" + DeviceIp.RIO7.getIp() + " " +
-            DeviceIp.RIO8.getComment() + ":" + DeviceIp.RIO8.getIp() + " " +
-            DeviceIp.RIO9.getComment() + ":" + DeviceIp.RIO9.getIp() + " " +
-            DeviceIp.RIO10.getComment() + ":" + DeviceIp.RIO10.getIp() + " " +
-            DeviceIp.RIO11.getComment() + ":" + DeviceIp.RIO11.getIp() + " " +
-            DeviceIp.RIO12.getComment() + ":" + DeviceIp.RIO12.getIp() + " " +
-            DeviceIp.RIO13.getComment() + ":" + DeviceIp.RIO13.getIp() + " " +
-            DeviceIp.RIO14.getComment() + ":" + DeviceIp.RIO14.getIp() + " " +
-            DeviceIp.RIO15.getComment() + ":" + DeviceIp.RIO15.getIp() + " " +
-            DeviceIp.RIO16.getComment() + ":" + DeviceIp.RIO16.getIp() + " " +
-            DeviceIp.RIO17.getComment() + ":" + DeviceIp.RIO17.getIp();
+    private static boolean reachable = false;
+    private static String ipList ="";
 
 
     public PingHostsRio() {
@@ -48,8 +33,10 @@ public class PingHostsRio extends javax.swing.JFrame {
         Wait wait = new Wait();
         wait.setVisible(true);
 
-
-        reachable = false;
+        // Создадим список с приборами РИО
+        for (IpListRio ipListRio : IpListRio.values()) {
+            ipList += ipListRio.getComment() + ":" + ipListRio.getIp() + " ";
+        }
 
         for (String str:ipList.split(" ")) {
             String ip = "";

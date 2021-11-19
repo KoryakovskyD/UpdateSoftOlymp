@@ -10,15 +10,13 @@ public class PingHosts extends javax.swing.JFrame {
 
     private static final String dirPngGreen="png/green.png";
     private static final String dirPngRed="png/red.png";
-    private static final String ipList=DeviceIp.DEVICE1.getIp() + " " + DeviceIp.DEVICE2.getIp() + " " + DeviceIp.DEVICE3.getIp() + " " +
-            DeviceIp.DEVICE4.getIp() + " " + DeviceIp.DEVICE5.getIp() + " " + DeviceIp.DEVICE6.getIp() + " " +
-            DeviceIp.DEVICE7.getIp() + " " + DeviceIp.DEVICE8.getIp() + " " + DeviceIp.DEVICE9.getIp();
-    private static boolean reachable;
+    private static String ipList= "";
+    private static boolean reachable = false;
 
     public PingHosts() {
         super("Пинг");
         this.setSize(new Dimension(220,400));
-        this.setLocation(1250,450);
+        this.setLocation(1270,450);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         Font font = new Font("Cambria",Font.PLAIN, 15);
@@ -34,10 +32,15 @@ public class PingHosts extends javax.swing.JFrame {
 
         // Запуск окна "Пожалуйста, подождите"
         Wait wait = new Wait();
-        wait.setVisible(true);
 
 
-        reachable = false;
+        // Создадим список с приборами Intel
+        for (IpListIntel ipListIntel : IpListIntel.values()) {
+            if (ipListIntel.getIp().contains("55") || ipListIntel.getIp().contains("99")) continue;
+            ipList += ipListIntel.getIp() + " ";
+        }
+
+
         for (String ip:ipList.split(" ")) {
             JLabel host =  new JLabel(ip);
             host.setPreferredSize(new Dimension(150, 40));
@@ -55,6 +58,7 @@ public class PingHosts extends javax.swing.JFrame {
             }
         }
 
+        wait.setVisible(false);
 
 
         container.add(button3);
@@ -62,7 +66,6 @@ public class PingHosts extends javax.swing.JFrame {
         container.add(button1);
         container.add(button2);
 
-        wait.setVisible(false);
 
         button1.addActionListener(e -> {
             setVisible(false);

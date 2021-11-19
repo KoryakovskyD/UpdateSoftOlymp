@@ -215,15 +215,15 @@ public class Prib09_update extends javax.swing.JFrame {
             // Пробежка по каждой машине
             for (String ip:ip_list.split(" ")) {
                 BashCommand.pushCommand("sshpass -p wizard ssh root@" + ip + " \"mkdir -p /mnt/net; sudo mount " +
-                        DeviceIp.SERVER.getIp() + ":/home/PROJECTS /mnt/net; /mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO/UpdateSoftOlymp/" +
+                        IpListIntel.SERVER.getIp() + ":/home/PROJECTS /mnt/net; /mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO/UpdateSoftOlymp/" +
                         command + "; sudo umount -l /mnt/net\"");
 
                 BashCommand.pushCommand("sshpass -p wizard ssh root@" + ip + " \"sudo mount " +
-                        DeviceIp.SERVER.getIp() + ":/home/PROJECTS /mnt/net; /mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO/UpdateSoftOlymp/" +
+                        IpListIntel.SERVER.getIp() + ":/home/PROJECTS /mnt/net; /mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO/UpdateSoftOlymp/" +
                         installOtherPO + "; sudo umount -l /mnt/net\"");
 
                 if (checkBoxCCS.isSelected())
-                BashCommand.pushCommand("sshpass -p wizard ssh root@" + ip + " \"sudo mount " + DeviceIp.SERVER.getIp() +
+                BashCommand.pushCommand("sshpass -p wizard ssh root@" + ip + " \"sudo mount " + IpListIntel.SERVER.getIp() +
                         ":/home/PROJECTS /mnt/net; cd /mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO/ccs; ./ccs; sudo umount -l /mnt/net\"");
             }
 

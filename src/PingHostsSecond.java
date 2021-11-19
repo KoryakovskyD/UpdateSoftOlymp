@@ -9,17 +9,13 @@ public class PingHostsSecond extends javax.swing.JFrame {
 
     private static final String dirPngGreen="png/green.png";
     private static final String dirPngRed="png/red.png";
-    private static boolean reachable;
-    private static final String ipList=DeviceIp.DEVICE1.getSecondIp() + " " + DeviceIp.DEVICE2.getSecondIp() + " " +
-            DeviceIp.DEVICE3.getSecondIp() + " " + DeviceIp.DEVICE4.getSecondIp() + " " +
-            DeviceIp.DEVICE5.getSecondIp() + " " + DeviceIp.DEVICE6.getSecondIp() + " " +
-            DeviceIp.DEVICE7.getSecondIp() + " " + DeviceIp.DEVICE8.getSecondIp() + " " +
-            DeviceIp.DEVICE9.getSecondIp();
+    private static boolean reachable = false;
+    private static String ipList= "";
 
     public PingHostsSecond() {
         super("10.3.6.0");
         this.setSize(new Dimension(220,400));
-        this.setLocation(1470,420);
+        this.setLocation(1490,420);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         Font font = new Font("Cambria",Font.PLAIN, 15);
@@ -30,12 +26,16 @@ public class PingHostsSecond extends javax.swing.JFrame {
         JButton button1 = new JButton("Закрыть");
         JButton button2 = new JButton("Обновить");
 
+        // Создадим список с приборами Intel
+        for (IpListIntel ipListIntel : IpListIntel.values()) {
+            if (ipListIntel.getIp().contains("55")) continue;
+            ipList += ipListIntel.getSecondIp() + " ";
+        }
 
         // Запуск окна "Пожалуйста, подождите"
         Wait wait = new Wait();
         wait.setVisible(true);
 
-        reachable = false;
         for (String ip : ipList.split(" ")) {
             JLabel host = new JLabel(ip);
             host.setPreferredSize(new Dimension(150, 40));
