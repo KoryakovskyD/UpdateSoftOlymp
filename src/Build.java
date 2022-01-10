@@ -14,7 +14,7 @@ public class Build extends javax.swing.JFrame {
 
         JLabel labelPrib = new JLabel(" Прибор для пересборки");
         labelPrib.setFont(new Font("Calibri", Font.PLAIN, 18));
-        JTextArea jTextAreaBrib = new JTextArea(DeviceIp.DEVICE5.getIp());
+        JTextArea jTextAreaBrib = new JTextArea(IpListIntel.DEVICE5.getIp());
         jTextAreaBrib.setFont(new Font("Calibri", Font.PLAIN, 18));
         JLabel line1 = new JLabel("--------------------------");
         line1.setFont(new Font("Calibri", Font.PLAIN, 20));
@@ -174,7 +174,7 @@ public class Build extends javax.swing.JFrame {
             Wait wait = new Wait();
             wait.setVisible(true);
 
-            BashCommand.pushCommand("sshpass -p wizard ssh root@" + IpPrib + " \"sudo mount " + DeviceIp.SERVER.getIp() +
+            BashCommand.pushCommand("sshpass -p wizard ssh root@" + IpPrib + " \"sudo mount " + IpListIntel.SERVER.getIp() +
                     ":/home/PROJECTS /mnt/net; /mnt/net/OLYMP-G/FLASH/INTEL/COMMON/SPO/UpdateSoftOlymp/" + command + "; sudo umount -l /mnt/net\"");
 
             JOptionPane.showMessageDialog(null, "Пересборка успешно завершена!");
