@@ -3,14 +3,15 @@ import java.awt.*;
 import java.io.File;
 
 public class JFrame extends javax.swing.JFrame {
+    public static Wait wait;
+    private JProgressBar progressBar;
 
     public JFrame() {
         super("Обновление СПО и ФПО заказа Олимп-Г.");
-        this.setBounds(500,500,770,280);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setBounds(500,500,770,280);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        Container container = this.getContentPane();
-        container.setLayout(new GridLayout(3,3));
+        JPanel container = new JPanel(new GridLayout(3,3));
 
         JButton button1 = new JButton("Прибор 4.09");
         button1.setFont(new Font("Calibri", Font.PLAIN, 20));
@@ -35,6 +36,11 @@ public class JFrame extends javax.swing.JFrame {
         button9.setFont(new Font("Calibri", Font.PLAIN, 20));
         button9.setToolTipText("Перевод приборов на штатную работу или SP");
 
+        progressBar = new JProgressBar(0, 100);
+        progressBar.setIndeterminate(true);
+        progressBar.setStringPainted(true);
+        progressBar.setString("Please, wait...");
+
         container.add(button1);
         container.add(button2);
         container.add(button3);
@@ -44,7 +50,14 @@ public class JFrame extends javax.swing.JFrame {
         container.add(button7);
         container.add(button8);
         container.add(button9);
+        add(container,BorderLayout.CENTER);
 
+        add(progressBar, BorderLayout.SOUTH);
+        progressBar.setVisible(false);
+
+
+        setVisible(true);
+        wait = new Wait();
 
         button1.addActionListener(e -> {
             setVisible(false);
@@ -60,10 +73,13 @@ public class JFrame extends javax.swing.JFrame {
             prib06.setVisible(true);
         });
 
-
         button3.addActionListener(e -> {
-            PingHosts pingHosts = new PingHosts();
-            pingHosts.setVisible(true);
+            new Thread(() -> {
+               progressBar.setVisible(true);
+               PingHosts pingHosts = new PingHosts("Intel(10.4.6.*)");
+               pingHosts.setVisible(true);
+               progressBar.setVisible(false);
+            }).start();
         });
 
         button4.addActionListener(e -> {
@@ -84,7 +100,7 @@ public class JFrame extends javax.swing.JFrame {
         button6.addActionListener(e -> {
             setVisible(false);
             check("/bin/pluma");
-            Doc.openDoc();
+            Doc.getDoc().openDoc();
             System.exit(0);
         });
 
@@ -116,4 +132,7 @@ public class JFrame extends javax.swing.JFrame {
             System.exit(0);
         }
     }
+
+
+
 }

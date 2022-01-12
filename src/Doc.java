@@ -1,6 +1,16 @@
 public class Doc {
-    public static void openDoc() {
-        String pathDoc="/home/PROJECTS/OLYMP-G/FLASH/INTEL/COMMON/SPO/DOC/";
-        BashCommand.pushCommand("pluma " + pathDoc + "readme");
+
+    static Doc doc;
+
+    static Doc getDoc() {
+        if (doc==null) doc = new Doc();
+        return doc;
+    }
+
+    public void openDoc() {
+        AppProperties ap = new AppProperties();
+        BashCommand.pushCommand(ap.getProp().getProperty("textEditor") +
+                " " + ap.getProp().getProperty("docPath") + "/" +
+                ap.getProp().getProperty("docName"));
     }
 }

@@ -4,8 +4,9 @@ public class Wait extends javax.swing.JFrame {
 
     public Wait() {
         super("Please, wait...");
-        this.setBounds(650,650,120,200);
+        this.setBounds(650,650,160,30);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setUndecorated(true);
 
         JPanel contents = new JPanel();
 
@@ -16,7 +17,5 @@ public class Wait extends javax.swing.JFrame {
 
         contents.add(progressBar);
         setContentPane(contents);
-        setSize(360, 80);
-        setVisible(true);
     }
 }
