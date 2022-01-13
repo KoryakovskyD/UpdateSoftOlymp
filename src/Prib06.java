@@ -1,3 +1,5 @@
+import lists.IpListIntel;
+
 import javax.swing.*;
 import java.awt.*;
 

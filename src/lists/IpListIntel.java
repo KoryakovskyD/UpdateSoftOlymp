@@ -1,3 +1,5 @@
+package lists;
+
 public enum IpListIntel {
     SERVER("Server", "10.4.6.55", "10.3.6.55"),
     DEVICE1("4.09(1) Верх","10.4.6.70", "10.3.6.70"),

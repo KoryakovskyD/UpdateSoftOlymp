@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="UpdateSoftOlymp:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/UpdateSoftOlymp_jar</output-path>
+    <root id="archive" name="UpdateSoftOlymp.jar">
+      <element id="module-output" name="UpdateSoftOlymp" />
+    </root>
+  </artifact>
+</component>

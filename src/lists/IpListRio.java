@@ -1,3 +1,5 @@
+package lists;
+
 public enum IpListRio {
     RIO1("16E01-00", "10.4.6.1"),
     RIO2("16E01-01", "10.4.6.3"),
