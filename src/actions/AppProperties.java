@@ -1,3 +1,5 @@
+package actions;
+
 import java.io.*;
 import java.util.Properties;
 

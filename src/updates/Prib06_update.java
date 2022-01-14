@@ -1,11 +1,13 @@
-import lists.IpListIntel;
+package updates;
 
+import lists.IpListIntel;
+import actions.*;
 import javax.swing.*;
 import java.awt.*;
 
-public class Prib06 extends javax.swing.JFrame {
+public class Prib06_update extends javax.swing.JFrame {
 
-    public Prib06() {
+    public Prib06_update() {
         super(IpListIntel.DEVICE9.getComment());
         this.setBounds(450,450,410,550);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -1,3 +1,7 @@
+package actions;
+
+import actions.BashCommand;
+import actions.Wait;
 import lists.IpListIntel;
 
 import javax.swing.*;

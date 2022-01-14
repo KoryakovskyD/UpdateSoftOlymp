@@ -1,4 +1,7 @@
+package actions;
+
 import lists.IpListIntel;
+import updates.Prib09_update;
 
 import javax.swing.*;
 import java.awt.*;

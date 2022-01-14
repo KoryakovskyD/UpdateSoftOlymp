@@ -1,8 +1,10 @@
+package actions;
+
 public class Doc {
 
     static Doc doc;
 
-    static Doc getDoc() {
+    public static Doc getDoc() {
         if (doc==null) doc = new Doc();
         return doc;
     }

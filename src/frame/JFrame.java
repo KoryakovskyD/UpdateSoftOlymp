@@ -1,17 +1,21 @@
-import ping.PingHosts;
+package frame;
+
+import actions.*;
+import ping.PingHostsIntel;
+import updates.Prib06_update;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 
 public class JFrame extends javax.swing.JFrame {
-    public static Wait wait;
     private JProgressBar progressBar;
 
     public JFrame() {
         super("Обновление СПО и ФПО заказа Олимп-Г.");
         setBounds(500,500,770,280);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        AppProperties ap = new AppProperties();
 
         JPanel container = new JPanel(new GridLayout(3,3));
 
@@ -56,10 +60,8 @@ public class JFrame extends javax.swing.JFrame {
 
         add(progressBar, BorderLayout.SOUTH);
         progressBar.setVisible(false);
-
-
         setVisible(true);
-        wait = new Wait();
+
 
         button1.addActionListener(e -> {
             setVisible(false);
@@ -71,14 +73,14 @@ public class JFrame extends javax.swing.JFrame {
         button2.addActionListener(e -> {
             setVisible(false);
             check("/bin/sshpass");
-            Prib06 prib06 = new Prib06();
+            Prib06_update prib06 = new Prib06_update();
             prib06.setVisible(true);
         });
 
         button3.addActionListener(e -> {
             new Thread(() -> {
                progressBar.setVisible(true);
-               PingHosts pingHosts = new PingHosts("Intel(10.4.6.*)");
+               PingHostsIntel pingHosts = new PingHostsIntel(ap.getProp().getProperty("network"));
                pingHosts.setVisible(true);
                progressBar.setVisible(false);
             }).start();

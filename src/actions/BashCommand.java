@@ -1,3 +1,5 @@
+package actions;
+
 import java.io.IOException;
 
 public class BashCommand {

@@ -1,6 +1,7 @@
+package actions;
+
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 
 public class SPorSHTAT extends javax.swing.JFrame{
     public SPorSHTAT() {

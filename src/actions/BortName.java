@@ -1,8 +1,9 @@
+package actions;
+
+import actions.BashCommand;
+
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 
 public class BortName extends javax.swing.JFrame {

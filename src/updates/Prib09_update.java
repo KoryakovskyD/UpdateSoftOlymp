@@ -1,5 +1,7 @@
-import lists.IpListIntel;
+package updates;
 
+import lists.IpListIntel;
+import actions.*;
 import javax.swing.*;
 import java.awt.*;
 

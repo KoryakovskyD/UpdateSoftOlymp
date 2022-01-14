@@ -1,3 +1,8 @@
+package actions;
+
+import actions.BashCommand;
+import actions.ChangePrib;
+
 public class OpenConsole {
     public void open(){
         // Список ip-адресов выбранных прибор

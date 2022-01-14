@@ -1,3 +1,5 @@
+package actions;
+
 import javax.swing.*;
 
 public class Wait extends javax.swing.JFrame {

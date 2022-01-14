@@ -1,3 +1,5 @@
+package updates;
+
 public class UpdateClient implements AutoCloseable{
 
 

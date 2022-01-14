@@ -4,9 +4,11 @@ package ping;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+
+import actions.AppProperties;
 import lists.*;
 
-public class PingHosts extends AbstractPingHosts {
+public class PingHostsIntel extends AbstractPingHosts {
 
     private static final String dirPngGreen="png/green.png";
     private static final String dirPngRed="png/red.png";
@@ -16,37 +18,37 @@ public class PingHosts extends AbstractPingHosts {
     private String setMode;
     private JProgressBar progressBar;
 
-    public PingHosts(String setMode) {
+
+    public PingHostsIntel(String setMode) {
         super("Пинг");
         this.setMode = setMode;
         this.setSize(new Dimension(220,400));
         this.setLocation(1270,450);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        AppProperties ap = new AppProperties();
 
         Font font = new Font("Cambria",Font.PLAIN, 15);
-
         JPanel container = new JPanel(new GridLayout(0,2));
-
         JButton button1 = new JButton("Закрыть");
         JButton button2 = new JButton("Зациклить");
-        JButton button3 = new JButton("10.3.6.*");
+        JButton button3 = new JButton(ap.getProp().getProperty("secondNetwork"));
         JButton button4 = new JButton("РИО");
         progressBar = new JProgressBar(0, 100);
         progressBar.setIndeterminate(true);
         progressBar.setStringPainted(true);
         progressBar.setString("Please, wait...");
 
+
+
         // Создадим список с приборами Intel
         ipList = "";
         for (IpListIntel ipListIntel : IpListIntel.values()) {
             if (ipListIntel.getIp().contains("55") || ipListIntel.getIp().contains("99")) continue;
-            switch (setMode) {
-                case "Intel(10.4.6.*)" :   ipList += ipListIntel.getIp() + " ";
-                                          break;
-                case "Intel(10.3.6.*)" :   ipList += ipListIntel.getSecondIp() + " ";
-                                          break;
-                default: break;
-            }
+
+            if (setMode.equals(ap.getProp().getProperty("network")))
+                ipList += ipListIntel.getIp() + " ";
+            else
+                ipList += ipListIntel.getSecondIp() + " ";
         }
 
 
@@ -70,7 +72,7 @@ public class PingHosts extends AbstractPingHosts {
             }
         }
 
-        if (setMode.equals("Intel(10.4.6.*)")) {
+        if (setMode.equals(ap.getProp().getProperty("network"))) {
             container.add(button3);
             container.add(button4);
         }
@@ -118,7 +120,7 @@ public class PingHosts extends AbstractPingHosts {
         button3.addActionListener(e -> {
             new Thread(() -> {
                 progressBar.setVisible(true);
-                PingHosts pingHosts = new PingHosts("Intel(10.3.6.*)");
+                PingHostsIntel pingHosts = new PingHostsIntel(ap.getProp().getProperty("secondNetwork"));
                 pingHosts.setVisible(true);
                 progressBar.setVisible(false);
             }).start();
