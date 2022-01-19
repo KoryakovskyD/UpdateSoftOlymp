@@ -11,8 +11,8 @@ public class UpdateSoftOlymp {
             client.run();
         } else {
             new JFrame();
-            Server server = new Server();
-            server.run();
+            //Server server = new Server();
+            //server.run();
         }
     }
 }

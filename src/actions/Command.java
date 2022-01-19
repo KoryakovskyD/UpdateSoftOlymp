@@ -1,8 +1,5 @@
 package actions;
 
-import actions.BashCommand;
-import actions.ChangePrib;
-
 import javax.swing.*;
 import java.awt.*;
 
